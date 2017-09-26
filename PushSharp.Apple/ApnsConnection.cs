@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Sockets;
 using System.Net.Security;
@@ -74,7 +75,7 @@ namespace PushSharp.Apple
         object notificationBatchQueueLock = new object ();
 
         //readonly object connectingLock = new object ();
-        Queue<CompletableApnsNotification> notifications = new Queue<CompletableApnsNotification> ();
+        ConcurrentQueue<CompletableApnsNotification> notifications = new ConcurrentQueue<CompletableApnsNotification> ();
         List<SentNotification> sent = new List<SentNotification> ();
 
         Timer timerBatchWait;
@@ -120,8 +121,11 @@ namespace PushSharp.Apple
             var toSend = new List<CompletableApnsNotification> ();
 
             while (notifications.Count > 0 && toSend.Count < Configuration.InternalBatchSize) {
-                var n = notifications.Dequeue ();
-                toSend.Add (n);
+                CompletableApnsNotification n;
+                if (notifications.TryDequeue(out n))
+                {
+                    toSend.Add(n);
+                }
             }
 
 
