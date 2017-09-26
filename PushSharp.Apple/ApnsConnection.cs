@@ -178,7 +178,7 @@ namespace PushSharp.Apple
                         }
                         catch (Exception e)
                         {
-                            Log.Error("APNS-CLIENT[{0}]: bad notification handled in", id, batchId, e;
+                            Log.Error("APNS-CLIENT[{0}]: bad notification handled in", id, batchId, e);
                         }
 
                     }
